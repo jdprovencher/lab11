@@ -161,3 +161,40 @@ The standout cell is **2025-11-02 01:00 — 308 calls**, about **7.7 times** the
 ### Five-sentence analysis
 
 > No: most nights share a late-night peak, but Nov 12 is elevated all day and Nov 2 has a sharp 1 a.m. spike. The largest single cell is 2025-11-02 at 01:00, with 308 Noise - Residential calls — about 7.7 times the median 01:00 count on other nights (40). I think that 1 a.m. spike is the end of daylight saving time at 2:00 a.m. that morning, which made 1:00–1:59 occur twice and collapsed two clock hours into one timestamp bucket, probably amplified by Saturday-night and Halloween-weekend reporting. Check one ruled out bad rows and duplicated records: all 304,905 Created Date values parsed to datetime64[ns] with zero NaT, zero duplicate Unique Keys, and zero fully duplicated rows. Check two ruled out a localized burst behind that cell: its 308 calls span five boroughs and 248 addresses, with the busiest address contributing only 10 calls (3.2%); Nov 12’s separate 2,817-call cluster at 655 East 230 Street (2,139 calls) is a real one-address burst, not the cause of the 1 a.m. spike.
+
+## Task 5
+
+Response times from `Created Date` to `Closed Date`, with medians by agency for the six agencies with the most total complaints. Script: `task5.py`.
+
+| Question | Answer |
+|---|---|
+| How many open cases were dropped? | **4,136** rows with no `Closed Date` |
+| Were any other rows invalid? | **98** rows had `Closed Date` before `Created Date`; also dropped and reported |
+| Usable closed cases | **300,671** of 304,905 rows |
+| Longest case created in November | **DPR — Overgrown Tree/Branches**, Unique Key `66705910`, **374.82 days** |
+| DPR mean vs. median | **917.5 hours (38.2 days)** vs. **186.7 hours (7.8 days)** |
+
+### Median hours by agency
+
+| Agency | Complaints | Open dropped | Invalid dropped | Closed used | Median hours | Median days |
+|---|---:|---:|---:|---:|---:|---:|
+| NYPD | 139,819 | 0 | 68 | 139,751 | 1.25 | 0.05 |
+| HPD | 86,247 | 215 | 0 | 86,032 | 53.84 | 2.24 |
+| DSNY | 20,363 | 213 | 1 | 20,149 | 38.56 | 1.61 |
+| DOT | 14,516 | 368 | 29 | 14,119 | 83.75 | 3.49 |
+| DEP | 13,734 | 126 | 0 | 13,608 | 39.58 | 1.65 |
+| DOB | 8,318 | 0 | 0 | 8,318 | 182.54 | 7.61 |
+
+### Longest case
+
+Unique Key `66705910` was a **DPR `Overgrown Tree/Branches`** complaint created `11/02/2025 03:35:44 PM` and closed `11/12/2026 11:18:34 AM`, for **8,995.71 hours = 374.82 days**. DPR is not one of the six largest agencies; it is the agency of the longest case.
+
+### DPR mean vs. median
+
+> DPR’s mean closure time is 917.5 hours (38.2 days), while its median is 186.7 hours (7.8 days), so the mean is 4.9 times the typical case. The longest case, an Overgrown Tree/Branches, took 8,995.7 hours (374.8 days), about 48 times the median, which shows the extreme right tail behind the gap. Removing that one case barely moves the mean (to 916.0 hours), so the gap reflects a broad tail of long cases, not one rogue record; the median remains the better description of a typical response.
+
+### Verification
+
+HPD’s median computed with `pandas groupby` is **53.836528 hours**; `numpy.median` on the same filtered durations is also **53.836528 hours**. The cross-check is commented next to `verify_median()` in `task5.py`.
+
+Both dates parsed to `datetime64[ns]`; all `Created Date` values parsed, and every non-blank `Closed Date` parsed successfully.

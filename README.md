@@ -198,3 +198,40 @@ Unique Key `66705910` was a **DPR `Overgrown Tree/Branches`** complaint created 
 HPD’s median computed with `pandas groupby` is **53.836528 hours**; `numpy.median` on the same filtered durations is also **53.836528 hours**. The cross-check is commented next to `verify_median()` in `task5.py`.
 
 Both dates parsed to `datetime64[ns]`; all `Created Date` values parsed, and every non-blank `Closed Date` parsed successfully.
+
+## Task 6
+
+Hold the job fixed: compare **HEAT/HOT WATER** across boroughs. Every one of the **47,946** rows is answered by **HPD**, so the complaint type and agency are constant and borough is the only dimension that varies. Script: `task6.py`.
+
+| Question | Answer |
+|---|---|
+| Fixed job and agency | **HEAT/HOT WATER / HPD** — 47,946 rows |
+| Open cases dropped | **34** rows with no `Closed Date`; no invalid closed-before-created rows |
+| Fastest borough | **Staten Island** — median **27.74 hours** (1.16 days) |
+| Slowest borough | **Queens** — median **42.84 hours** (1.79 days) |
+| Fastest-to-slowest gap | **15.1 hours** (0.63 days), or **1.54×** as long |
+| Chart | `fig-same-job.png` |
+
+### Median hours by borough
+
+| Borough | Complaints | Open dropped | Closed used | Median hours | Median days |
+|---|---:|---:|---:|---:|---:|
+| Staten Island | 348 | 0 | 348 | 27.74 | 1.16 |
+| Bronx | 16,671 | 8 | 16,663 | 30.82 | 1.28 |
+| Manhattan | 11,438 | 13 | 11,425 | 34.16 | 1.42 |
+| Brooklyn | 12,582 | 13 | 12,569 | 37.73 | 1.57 |
+| Queens | 6,907 | 0 | 6,907 | 42.84 | 1.79 |
+
+### Chart
+
+![HEAT/HOT WATER median hours to close by borough, November 2025](fig-same-job.png)
+
+The bars are sorted fastest to slowest. The x-axis is “Median hours to close,” the y-axis is “Borough,” and the bars are labeled with closed-case counts.
+
+### Verification
+
+Queens median from pandas = **42.840000 hours**; `statistics.median` on the plain list = **42.840000 hours**. Same number; the cross-check is commented next to `verify_median()` in `task6.py`.
+
+### One-paragraph answer
+
+> The gap for identical work is 15.1 hours (0.63 days): Staten Island closes HEAT/HOT WATER cases in a median of 27.7 hours, while Queens takes 42.8 hours, or 1.54 times as long. Because every row is the same complaint type, the same agency (HPD), and the same month, the “different jobs” excuse is no longer available; the gap is about place, not task. It could still reflect differences in inspector staffing and deployment, queue workload and triage, building age and landlord responsiveness, case complexity, or the way closures are recorded. To tell those candidates apart I would need HPD staffing and inspection schedules by borough, assignment and queue timestamps that separate waiting from work time, and building/landlord condition data; this file has address, BBL, community board, resolution text, and resolution-update dates, but none of those pins down capacity versus need versus reporting practice.

@@ -1,5 +1,3 @@
-testing
-
 ## Task 1
 
 | Question | Answer |

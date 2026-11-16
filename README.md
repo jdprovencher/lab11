@@ -235,3 +235,25 @@ Queens median from pandas = **42.840000 hours**; `statistics.median` on the plai
 ### One-paragraph answer
 
 > The gap for identical work is 15.1 hours (0.63 days): Staten Island closes HEAT/HOT WATER cases in a median of 27.7 hours, while Queens takes 42.8 hours, or 1.54 times as long. Because every row is the same complaint type, the same agency (HPD), and the same month, the “different jobs” excuse is no longer available; the gap is about place, not task. It could still reflect differences in inspector staffing and deployment, queue workload and triage, building age and landlord responsiveness, case complexity, or the way closures are recorded. To tell those candidates apart I would need HPD staffing and inspection schedules by borough, assignment and queue timestamps that separate waiting from work time, and building/landlord condition data; this file has address, BBL, community board, resolution text, and resolution-update dates, but none of those pins down capacity versus need versus reporting practice.
+
+## Task 7
+
+**Anomaly chased:** the **196 rows with `Borough = "Unspecified"`** — 0.064% of the file. Script: `task7.py`.
+
+| Question | Answer |
+|---|---|
+| What do they have in common? | Mostly location-free service complaints: **TLC 70, DOT 59, DSNY 30** — 159 of 196 rows |
+| Top problem types | **Ferry Inquiry 29, Taxi Complaint 24, Derelict Vehicles 23, For Hire Vehicle Complaint 20** |
+| Missing geography | **176** no `Incident Zip`, **163** no `Incident Address`, **179** no `City`, only **13** with coordinates |
+| Located rows | 20 have zips and 17 have cities, including Buffalo, Albany, San Francisco, Pittsburgh, and Harrisburg; 42 are intersections and 12 are DSNY garages |
+| Verdict | **Data artifact / legitimate category effect**, not a real place; this file cannot tell whether any located rows should have been geocoded |
+
+### The three queries
+
+1. Grouped the 196 rows by `Agency` and `Problem (formerly Complaint Type)`: TLC, DOT, and DSNY dominate, and taxi/ferry/vehicle reports are the common thread.
+2. Checked the location fields: most of the rows have no zip, address, city, or coordinates, so the missing borough is part of a broader missing-location pattern.
+3. Inspected the rows that do have zips or cities: they point to out-of-NYC places as well as a few local intersections and DSNY garages, with no hidden New York neighborhood behind the label.
+
+### Five-sentence write-up
+
+> I found 196 rows with Borough='Unspecified', concentrated in location-free service complaints: TLC (70), DOT (59), DSNY (30), led by Ferry Inquiry (29), Taxi Complaint (24), and Derelict Vehicles (23). Query 1 grouped them by agency and problem type, showing that 159 of 196 come from those three agencies and that taxi, ferry, and vehicle reports dominate. Query 2 checked the location fields: 176 have no Incident Zip, 163 no Incident Address, 179 no City, and only 13 have coordinates, so the missing borough tracks missing geography rather than a specific place. Query 3 inspected the 20 rows with zips and 17 with City values; they include Buffalo, Albany, San Francisco, Pittsburgh, Harrisburg, and other out-of-NYC addresses, along with 42 intersections and 12 DSNY garages, so there is no hidden New York neighborhood behind the label. Verdict: this is a data artifact/legitimate category effect, not a real place—taxi, ferry, consumer, and garage complaints often have no fixed borough—and the file alone cannot tell whether any of the located rows should have been geocoded.

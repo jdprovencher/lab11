@@ -308,6 +308,8 @@ def main():
     check("longest case key", longest[1], "66705910")
     check("longest case agency", longest[2], "DPR")
     check("longest case problem", longest[3], "Overgrown Tree/Branches")
+    check("longest case created", longest[4], "11/02/2025 03:35:44 PM")
+    check("longest case closed", longest[5], "11/12/2026 11:18:34 AM")
     close("longest case hours", longest[0], 8_995.713889, 5e-5)
     close("longest case days", longest[0] / 24, 374.821412, 5e-5)
     dpr = durations["DPR"]
@@ -316,6 +318,8 @@ def main():
     close("DPR median hours", statistics.median(dpr), 186.691944, 5e-5)
     close("DPR mean / median", statistics.mean(dpr) / statistics.median(dpr),
           4.914594, 5e-5)
+    close("longest case / DPR median", longest[0] / statistics.median(dpr),
+          48.184799, 5e-5)
     close("DPR mean excluding longest",
           statistics.mean([value for value in dpr if value != longest[0]]),
           916.037463, 5e-5)

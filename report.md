@@ -342,6 +342,7 @@ and the mean-vs-median explanation; a chart would not add a second method.
 | Mean | 917.5 | 38.2 | `statistics.mean` on 5,468 DPR durations = 917.515092 h |
 | Median | 186.7 | 7.8 | `statistics.median` = 186.691944 h |
 | Mean / median | 4.9× | — | 917.515092 / 186.691944 = 4.914594 |
+| Longest case / median | 48.2× | — | 8,995.713889 / 186.691944 = 48.184799 |
 | Mean excluding the longest case | 916.0 | 38.2 | Recompute after removing `66705910` = 916.037463 h |
 
 The two-ways comment beside `verify_median()` in `task5.py`:

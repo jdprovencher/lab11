@@ -118,3 +118,46 @@ Population check: 1,472,654 + 2,736,074 + 1,694,251 + 2,405,464 + 495,747 = **8,
 ### 3c write-up
 
 > Yes: Brooklyn falls from first in raw calls (88,591) to third per 1,000 residents (32.4), while the Bronx rises from second to first (50.7) and Manhattan jumps from fourth to second (36.6); Queens slips from third to fourth (28.9), and Staten Island stays fifth (19.9). Brooklyn and Queens are large, relatively lower-density outer boroughs with more low-rise, owner-occupied neighborhoods, so their big raw totals mostly track population size rather than a higher rate of calling 311. Manhattan’s high rate is plausibly explained by dense rental housing, older buildings, and a huge daytime population of workers and visitors who can call 311 but are not counted in the resident denominator. The Bronx’s leading rate is consistent with dense, older housing stock and more housing-condition complaints, though the data cannot tell us whether that reflects greater need, greater willingness to report, or both. Even the per-1,000 measure is only a rough correction, because the denominator counts residents while the numerator counts calls that anyone can make.
+
+## Task 4
+
+Two problem types chosen for their different expected rhythms: **Noise - Residential** and **HEAT/HOT WATER**. Script: `task4.py`. Counts are 311 calls, not residents.
+
+| Question | Answer |
+|---|---|
+| Noise - Residential peak | **22:00** — 3,878 calls |
+| HEAT/HOT WATER peak | **09:00** — 2,799 calls |
+| Does the claim survive a borough split? | **Yes** — in Brooklyn, noise still peaks at **22:00** (910 calls) and heat at **09:00** (845 calls) |
+| `Created Date` dtype | `object` before parsing → **`datetime64[ns]`** after; **0** parse failures |
+| Peak matches `value_counts()` / table? | **Yes** — noise `value_counts` 22, table 22; heat `value_counts` 9, table 9 |
+| Charts | `fig-hours.png`, `fig-nights.png` |
+
+### Claim under the chart
+
+> Noise - Residential peaks at 22:00 with 3,878 calls, while HEAT/HOT WATER peaks at 09:00 with 2,799 calls. That is consistent with a morning rhythm for heat problems and a late-night rhythm for noise complaints.
+
+### Hourly chart
+
+![Hourly 311 calls for Noise - Residential and HEAT/HOT WATER, November 2025](fig-hours.png)
+
+The chart plots lines, not bars, with “Hour of day (0 = midnight)” on the x-axis and “Number of 311 calls in November 2025” on the y-axis.
+
+### Night-by-night heat map
+
+The heat map follows the late-night curve, **Noise - Residential**. It is a 30-row × 24-column day-by-hour table (one row per calendar date, hours 00–23) containing all 43,928 noise calls.
+
+![Noise - Residential calls by night and hour, November 2025](fig-nights.png)
+
+The standout cell is **2025-11-02 01:00 — 308 calls**, about **7.7 times** the median 01:00 count of 40 on other nights. Nov 12 is also visibly elevated all day: 2,817 noise calls, of which **2,139 (75.9%)** came from one address, 655 East 230 Street.
+
+### Verification
+
+- **Date parsing:** `Created Date` is `object` before parsing and `datetime64[ns]` after; all **304,905** values parsed with zero NaT, and every hour is in 0–23.
+- **Peak hours:** the plotted peaks match both `value_counts()` and the groupby/table output for the same filtered data — noise 22, heat 9.
+- **Night table:** shape is **30 × 24**, and its cells sum to **43,928**, exactly the number of Noise - Residential rows.
+- **Bad rows / duplicates:** zero duplicate `Unique Key` values and zero fully duplicated rows in the full dataset.
+- **Burst check for the 01:00 cell:** its 308 calls span **five boroughs and 248 addresses**, with the busiest address contributing only 10 calls (3.2%), so the spike is not one address or one copied record. Nov 12’s 2,139-call cluster at 655 East 230 Street is a separate, real one-address burst.
+
+### Five-sentence analysis
+
+> No: most nights share a late-night peak, but Nov 12 is elevated all day and Nov 2 has a sharp 1 a.m. spike. The largest single cell is 2025-11-02 at 01:00, with 308 Noise - Residential calls — about 7.7 times the median 01:00 count on other nights (40). I think that 1 a.m. spike is the end of daylight saving time at 2:00 a.m. that morning, which made 1:00–1:59 occur twice and collapsed two clock hours into one timestamp bucket, probably amplified by Saturday-night and Halloween-weekend reporting. Check one ruled out bad rows and duplicated records: all 304,905 Created Date values parsed to datetime64[ns] with zero NaT, zero duplicate Unique Keys, and zero fully duplicated rows. Check two ruled out a localized burst behind that cell: its 308 calls span five boroughs and 248 addresses, with the busiest address contributing only 10 calls (3.2%); Nov 12’s separate 2,817-call cluster at 655 East 230 Street (2,139 calls) is a real one-address burst, not the cause of the 1 a.m. spike.

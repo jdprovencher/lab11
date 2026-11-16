@@ -2,23 +2,24 @@ testing
 
 ## Task 1
 
-Analysis of `nyc-311-2025-november.csv.gz`. Every answer below was computed with pandas and independently verified by streaming the gzipped CSV with Python's `csv` module (see `answers.py`).
+| Question | Answer |
+|---|---|
+| How many rows and columns? | **304,905 rows × 44 columns** |
+| How many distinct values does `Problem (formerly Complaint Type)` have? | **174** |
+| Earliest `Created Date` | **2025-11-01 00:00:04** |
+| Latest `Created Date` | **2025-11-30 23:59:52** |
+| How many rows have no `Closed Date`? | **4,136** |
 
-**Rows and columns:** 304,905 rows × 44 columns.
+Source: `nyc-311-2025-november.csv.gz`. Each answer was computed with pandas and then independently verified by streaming the gzipped CSV with Python's `csv` module; see `answers.py`.
 
-- Check: `zcat nyc-311-2025-november.csv.gz | wc -l` = 304,906 lines = 1 header + 304,905 rows; the header has 44 fields.
+### Verification
 
-**Distinct `Problem (formerly Complaint Type)` values:** 174 (no blank values).
+- **Rows:** `zcat nyc-311-2025-november.csv.gz | wc -l` = 304,906 lines = 1 header + 304,905 rows. The header has 44 fields.
+- **Distinct Problem:** pandas `nunique()` = 174; a set built from the raw CSV = 174. No blank values.
+- **Created Date:** parsed with `%m/%d/%Y %I:%M:%S %p`; all 304,905 values parsed, and an independent `datetime.strptime` pass gives the same earliest and latest.
+- **No Closed Date:** pandas `isna()` = 4,136; rows whose raw `Closed Date` field is `""` = 4,136.
 
-**`Created Date` range:** earliest `2025-11-01 00:00:04`, latest `2025-11-30 23:59:52`.
-
-- Parsed with `%m/%d/%Y %I:%M:%S %p`; all 304,905 values parsed successfully.
-
-**Rows with no `Closed Date`:** 4,136.
-
-- Check: 4,136 rows have an empty raw `Closed Date` field.
-
-Their `Status` values:
+### Status of rows with no `Closed Date`
 
 | Status | Rows |
 |---|---|
